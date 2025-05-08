@@ -1,5 +1,7 @@
 import numpy as np
 import random as rand
+from Classes import Player, PlayedCard
+# import Classes 
 
 #values (dictionary)
 def create_deck():
@@ -42,16 +44,12 @@ def create_deck():
 
 #Player creation
 
-class Players:
-    def __init__(self, color, turnindex, name):
-        self.color = color
-        self.turnindex = turnindex
-        self.name = name
 
-p1 = Players("blue", True, "Player 1")
-p2 = Players("red", False, "Player 2") 
-p3 = Players("green", False, "Player 3")
-p4 = Players("yellow", False, "Player 4")
+p1 = Player("blue", True, "Player 1")
+p2 = Player("red", False, "Player 2") 
+p3 = Player("green", False, "Player 3")
+p4 = Player("yellow", False, "Player 4")
+
 
 # print(p2.color)
 # print(p2.turnindex)
@@ -81,7 +79,12 @@ def shuffle(deck):
 
 
     for x in range(52):
-        hands[x%4].append(dealcard(deck))
+        c = dealcard(deck)
+        hands[0].append(c)
+        hands[1].append(c)
+        hands[2].append(c)
+        hands[3].append(c)
+        #hands[x%4].append(dealcard(deck)) #this is the right one
     return hands
     # for card in hands [0]:
     #     print(f"{card['symbol']}{card['rank']}")
@@ -175,7 +178,9 @@ while (gameisactive == True):
 
                     if card_to_play:
                         hands[d].remove(card_to_play)
-                        table.append(card_to_play)
+                        table.append(PlayedCard(symbol, rank, playerorder[d]))
+                        if d == 0:
+                            first_suit = symbol
                         print(f"{playerorder[d].name} played {symbol}{rank}")
                         break
 
@@ -185,5 +190,36 @@ while (gameisactive == True):
                 except ValueError:
                     print(f"Invalid input. Choose another card")
 
+        # for card in table:
+        #     print(f"{card['symbol']}{card['rank']}")
+            
+        #determine winner
+        heartcards = [card for card in table if card.isHeart]
+
+        #check for hearts
         for card in table:
-            print(f"{card['symbol']}{card['rank']}")
+        #     print(card.rank)
+        #     print(card.suit)
+        #     print(card.player.name)
+        #     print(card.value)
+
+            #if len(heartcards) == 1:
+            #round_winner = heartcards[0].player
+                
+
+            if len(heartcards) >= 1:
+                final_list = heartcards
+
+            else:
+                final_list = [card for card in table if card.suit == first_suit]
+
+            biggest = 0
+            for niki in final_list:
+                if niki.value > biggest:
+                    biggest = niki.value
+                    round_winner = niki.player
+
+        round_winner.score += 1
+        print(f"{round_winner.name} wins this round! {round_winner.name}'s score is now {round_winner.score} ")
+
+        
