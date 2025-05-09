@@ -6,6 +6,9 @@ class Player:
         self.turnindex = turnindex
         self.name = name
         self.score = 0
+        self.bet = 0
+        self.big_score = 0
+        self.iswinner = False
 
 
 #Played cards
