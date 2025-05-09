@@ -79,12 +79,12 @@ def shuffle(deck):
 
 
     for x in range(52): #this right here gives everyone a full deck
-        c = dealcard(deck)
-        hands[0].append(c)
-        hands[1].append(c)
-        hands[2].append(c)
-        hands[3].append(c)
-        #hands[x%4].append(dealcard(deck)) #this is the right one
+        # c = dealcard(deck)
+        # hands[0].append(c)
+        # hands[1].append(c)
+        # hands[2].append(c)
+        # hands[3].append(c)
+        hands[x%4].append(dealcard(deck)) #this is the right one
     return hands
     # for card in hands [0]:
     #     print(f"{card['symbol']}{card['rank']}")
@@ -115,6 +115,12 @@ def rotate_list(playerorder):
     # for i in range(4):
     #     print(f"new list: {rotated[i].name}")
     return rotated
+
+def sort_scoresheet(playerorder):
+    sorted_players = sorted(playerorder, key = lambda p: p.big_score, reverse = True)
+    print("Scoresheet: ")
+    for player in sorted_players:
+        print(f"{player.name}: {player.big_score}")
 
 
 gameisactive = None
@@ -161,7 +167,7 @@ while (gameisactive == True):
             continue
        
         table = []
-        while len(hands[3]) > 49: #should be while len() != 0
+        while len(hands[3]) is not 0: #should be while len() != 0
             #round starts
             for d in range(4):
                 while True:
@@ -247,6 +253,9 @@ while (gameisactive == True):
             else: 
                 playerorder[x].big_score += playerorder[x].bet
                 print(f"{playerorder[x].name} wagered {playerorder[x].bet} and got {playerorder[x].score}. {playerorder[x].name} gets {playerorder[x].bet} points! Good job! ")
+        
+        #print scoresheet
+        sort_scoresheet(playerorder)
 
         #check if someone won the entire game
 
@@ -268,15 +277,19 @@ while (gameisactive == True):
                     if winner_list[x].big_score > big_score_tracker:
                         big_score_tracker = winner_list[x].big_score
                         goat = winner_list[x]
-
-        print(f"{goat.name} wins the game! Congratulations")
-        for i in range(4):
-            print(f"Scoresheet: {playerorder[i].name}: {playerorder[i].big_score}")
         
 
-        #include some function that sorts the scoresheet in decreasing order
-        #print scoresheet after every round where big_points get awarded
-        #actually end the game when someone wins and give option to restart a new game
+        if goat is not None:
+            print(f"{goat.name} wins the game! Congratulations")
+            gameisactive = False
+
+            break
+        
+
+        #reset all parameters that need to be reset for a new round (or game)
+
+
+        #actually end the game when someone wins and give option to restart a new game (end game has been achieved)
 
         
 
