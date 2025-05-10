@@ -100,11 +100,12 @@ def sort_hands(hands):
         hands[i] = sorted(hands[i], key = lambda card: (suit_order[card['symbol']], -rank_order[card['rank']]))
     
     
-# for i, hand in enumerate(hands):
-#     print(f"Player {i + 1}'s hand:")
-#     for card in hand:
-#         print(f"{card['symbol']}{card['rank']}")
-#     print()  # empty line between player
+def print_hands(hands):
+    for i, hand in enumerate(hands):
+        print(f"Player {i + 1}'s hand:")
+        for card in hand:
+            print(f"{card['symbol']}{card['rank']}")
+        print()  # empty line between player
 
 
 #rotate a list (for determining starting player of the round)
@@ -114,7 +115,8 @@ def rotate_list(playerorder):
     rotated = playerorder[start_index:] + playerorder[:start_index]
     # for i in range(4):
     #     print(f"new list: {rotated[i].name}")
-    return rotated
+    return rotated, start_index
+
 
 def sort_scoresheet(playerorder):
     sorted_players = sorted(playerorder, key = lambda p: p.big_score, reverse = True)
@@ -138,6 +140,7 @@ while (gameisactive == True):
         hands = shuffle(deck)
         sort_hands(hands)
         print("Hands have been dealt")
+        print_hands(hands) #for debugging
         #set bets
 
         for x in range(4):
@@ -167,7 +170,7 @@ while (gameisactive == True):
             continue
        
         table = []
-        while len(hands[3]) is not 0: #should be while len() != 0
+        while len(hands[3]) != 0: #should be while len() != 0
             #round starts
             for d in range(4):
                 while True:
@@ -229,6 +232,7 @@ while (gameisactive == True):
                     final_list = [card for card in table if card.suit == first_suit]
 
                 biggest = 0
+                round_winner = None
                 for niki in final_list:
                     if niki.value > biggest:
                         biggest = niki.value
@@ -237,7 +241,8 @@ while (gameisactive == True):
             round_winner.score += 1
             round_winner.turnindex = True
             print(f"{round_winner.name} wins this round! {round_winner.name}'s score is now {round_winner.score} ")
-            playerorder = rotate_list(playerorder)
+            playerorder, rotation_amount = rotate_list(playerorder)
+            hands = hands[rotation_amount:] + hands[:rotation_amount]
             
             
             # for i in range(4):
@@ -257,13 +262,17 @@ while (gameisactive == True):
         #print scoresheet
         sort_scoresheet(playerorder)
 
-        #check if someone won the entire game
 
+        #reset round scores
+        for k in range(4):
+            playerorder[k].score = 0
+
+        #check if someone won the entire game
         
         winner_list = []
         goat = None
         for i in range(4):
-            if playerorder[i].big_score >= 2:
+            if playerorder[i].big_score >= 12: #should be 42
                 winner_list.append(playerorder[i])
         
         if len(winner_list) > 0:
@@ -286,7 +295,8 @@ while (gameisactive == True):
             break
         
 
-        #reset all parameters that need to be reset for a new round (or game)
+        #reset all parameters that need to be reset for a new round (or game) #might have done that
+        #round_winner logic is bugged
 
 
         #actually end the game when someone wins and give option to restart a new game (end game has been achieved)
